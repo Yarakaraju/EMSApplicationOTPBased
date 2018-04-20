@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # springboot-jwt
 ## An Example Spring Boot Application for Securing a REST API with JSON Web Token (JWT)
 
@@ -131,3 +132,6 @@ Use one of the several ways of running a Spring Boot application. Below are just
              }
            ]
            `
+=======
+# EMSApplicationOTPBased
+>>>>>>> 5399a009b331c368df2d85079c0d0fe481e07ee9
