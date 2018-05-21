@@ -1,5 +1,6 @@
 package com.technocomp.emsapp.controller;
 
+import com.amazonaws.services.cognitoidp.model.HttpHeader;
 import com.technocomp.emsapp.domain.EnroleNotice;
 import com.technocomp.emsapp.domain.Messages;
 import com.technocomp.emsapp.domain.Notices;
@@ -29,6 +30,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.util.UriComponentsBuilder;
+
+/**
+ * This RestController has the CRUD API Exposed to handle white board notices.
+ * @author Ravi Varma Yarakaraju
+ * @version 1.0 *
+ */
 
 @RestController
 @Controller
@@ -69,20 +76,52 @@ public class WhiteBoardController {
         return whiteBoardService.getNoticesByUserID(getUserdetails());
     }
 
+     /**
+     * API to get private messages. .
+     * @param latitudefornotice
+     * @param longitudefornotice
+     * @param maxRadius
+     * @return JSON object of Iterable list of private messages 
+     * @throws Exception 
+     */
     @RequestMapping(value = "/privateMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Iterable<Messages>> getPrivateMessages(@RequestParam(value = "latitudefornotice") String latitudefornotice,
             @RequestParam(value = "longitudefornotice") String longitudefornotice,
-            @RequestParam(value = "maxRadius") int maxRadius) {
+            @RequestParam(value = "maxRadius") int maxRadius) throws Exception {
         return new ResponseEntity<Iterable<Messages>>((messagesService.getMessages(getUserdetails(), "p")), HttpStatus.OK);
     }
 
+    /**
+     * API to get group messages. .
+     * @param latitudefornotice
+     * @param longitudefornotice
+     * @param maxRadius
+     * @return JSON object of Iterable list of group messages 
+     * @throws Exception 
+     */
     @RequestMapping(value = "/groupMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Iterable<Messages>> getGroupMessages(@RequestParam(value = "latitudefornotice") String latitudefornotice,
             @RequestParam(value = "longitudefornotice") String longitudefornotice,
-            @RequestParam(value = "maxRadius") int maxRadius) {
+            @RequestParam(value = "maxRadius") int maxRadius) throws Exception{
         return new ResponseEntity<Iterable<Messages>>((messagesService.getMessages(getUserdetails(), "g")), HttpStatus.OK);
     }
 
+    /**
+     * API to register new notice.
+     * @param itemTitle
+     * @param itemDescription
+     * @param mobile
+     * @param maxPratispents
+     * @param latitude
+     * @param longitude
+     * @param location
+     * @param city
+     * @param state
+     * @param allowedRadius
+     * @param ucBuilder
+     * @return HTTP status OK if created successfully. 
+     * @throws Exception 
+     */
     @RequestMapping(value = "/registerNewNotice", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerNewNotice(
             @RequestPart(value = "itemTitle", required = true) String itemTitle,
@@ -95,7 +134,7 @@ public class WhiteBoardController {
             @RequestPart(value = "city", required = true) String city,
             @RequestPart(value = "state", required = true) String state,
             @RequestPart(value = "allowedRadius", required = true) String allowedRadius,
-            UriComponentsBuilder ucBuilder) {
+            UriComponentsBuilder ucBuilder) throws Exception{
 
         WhiteBoard whiteBoard = new WhiteBoard();
         whiteBoard.setAllowedRadius(allowedRadius);
@@ -116,8 +155,15 @@ public class WhiteBoardController {
         return new ResponseEntity<String>(headers, HttpStatus.CREATED);
     }
 
+    /**
+     * API to delete Notice.
+     * @param id
+     * @param ucBuilder
+     * @return HTTP status OK if created successfully. 
+     * @throws Exception 
+     */
     @RequestMapping(value = "/deleteNotice", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteNotice(@PathVariable Integer id, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<?> deleteNotice(@PathVariable Integer id, UriComponentsBuilder ucBuilder) throws Exception{
         WhiteBoard whiteBoard = whiteBoardService.findWhiteBoardByID(id);
         HttpHeaders headers = new HttpHeaders();
 
@@ -133,53 +179,100 @@ public class WhiteBoardController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/noticesByTwoMiles", method = RequestMethod.POST)
+     /**
+     * API to list Of Notices Two Mile Radius.
+     * @param latitudefornotice
+     * @param longitudefornotice
+     * @param maxRadius
+     * @return HTTP status OK if created successfully. 
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/noticesByTwoMiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> listOfNoticesTwoMileRadius(
             @RequestParam(value = "latitudefornotice") String latitudefornotice,
             @RequestParam(value = "longitudefornotice") String longitudefornotice,
-            @RequestParam(value = "maxRadius") int maxRadius) {
+            @RequestParam(value = "maxRadius") int maxRadius) throws Exception{
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<List<WhiteBoard>>(whiteBoardService.getNoticesByLocation(latitudefornotice, longitudefornotice, maxRadius, getUserdetails()), headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/noticesByCity", method = RequestMethod.POST)
+    /**
+     * API to get notices By City.
+     * @param city
+     * @return HTTP status OK if created successfully. 
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/noticesByCity", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> noticesByCity(
-            @RequestParam(value = "city") String city) {
+            @RequestParam(value = "city") String city) throws Exception{
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<List<WhiteBoard>>(whiteBoardService.getNoticesByCity(city), headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/noticesByState", method = RequestMethod.POST)
+    /**
+     * API to get notices By State.
+     * @param state
+     * @return HTTP status OK if created successfully. 
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/noticesByState", method = RequestMethod.POST,  consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> noticesByState(
-            @RequestParam(value = "state") String state) {
+            @RequestParam(value = "state") String state) throws Exception{
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<List<WhiteBoard>>(whiteBoardService.getNoticesByState(state), headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/noticesByCountry", method = RequestMethod.POST)
+     /**
+     * API to get notices By Country.
+     * @param country
+     * @return HTTP status OK if created successfully. 
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/noticesByCountry", method = RequestMethod.GET, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> noticesByCountry(
-            @RequestParam(value = "country") String country) {
+            @RequestParam(value = "country") String country) throws Exception{
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<List<WhiteBoard>>(whiteBoardService.getNoticesByCountry(country), headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/findEnroleNoticeByEmail", method = RequestMethod.POST)
-    public ResponseEntity<?> findEnroleNoticeByEmail() {
+     /**
+     * API to find Enrolled Notices By Logged in user Email.
+     * @return HTTP status OK if created successfully. 
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/findEnroleNoticeByEmail", method = RequestMethod.GET, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> findEnroleNoticeByEmail() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<List<EnroleNotice>>(enroleNoticeService.findEnroleNoticeByEmail(getUserdetails()), headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/findEnroleNoticeForApproval", method = RequestMethod.POST)
+     /**
+     * API to find Enrolled Notices By Logged in user Email.
+     * @return HTTP status OK if created successfully. 
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/findEnroleNoticeForApproval", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> findEnroleNoticeForApproval() {
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<Iterable<EnroleNotice>>(enroleNoticeService.findEnroleNoticeForApproval(getUserdetails()), headers, HttpStatus.OK);
     }
 
+     /**
+     * API to list Of Notices To Enroll.
+     * @param httpSession To get HTTP session object
+     * @param request To get HttpServletRequest
+     * @param response To get HttpServletResponse
+     * @param latitudefornotice To get latitude for notice
+     * @param longitudefornotice To get longitude for notice 
+     * @param maxRadius To get Max Radius
+     * @return HTTP status OK if created successfully. 
+     * @throws Exception when error while creating view object
+     */
     @RequestMapping(value = "/notices", method = RequestMethod.POST)
     public ModelAndView listOfNoticesToEnrole(HttpSession httpSession, HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "latitudefornotice") String latitudefornotice,
             @RequestParam(value = "longitudefornotice") String longitudefornotice,
-            @RequestParam(value = "maxRadius") int maxRadius) {
+            @RequestParam(value = "maxRadius") int maxRadius) throws Exception  {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("notices", new Notices());
         httpSession.setAttribute("latitudefornotice", latitudefornotice);
@@ -195,16 +288,16 @@ public class WhiteBoardController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/listUsersDetails/{id}", method = RequestMethod.GET)
-    public ModelAndView individualNoticeDetails(
+    
+    @RequestMapping(value = "/listUsersDetails/{id}", method = RequestMethod.GET, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> individualNoticeDetails(
             @PathVariable(value = "id") int id) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("individualNoticeDetails", userService.findNoticeEnrolledPeople(id));
-        modelAndView.setViewName("noticeDetails");
-        return modelAndView;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("message", "Individual notice details fetched sucessfully.");
+        return new ResponseEntity<>(userService.findNoticeEnrolledPeople(id), headers, HttpStatus.FOUND);
     }
 
-    @RequestMapping(value = "/enroleToNotices/enrole/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/enroleToNotices/enrole/{id}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> enroleToNotices(@PathVariable Integer id) {
         HttpHeaders headers = new HttpHeaders();
         EnroleNotice enroleNotice = enroleNoticeService.findEnroleNoticeByItemIdAndEmail(id, getUserdetails());
@@ -257,11 +350,10 @@ public class WhiteBoardController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/approvalRejected/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/approvalRejected/{id}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> rejectApprovalAndSendMessage(@PathVariable Integer id, 
             @RequestParam(value = "rejectMessage") String rejectMessage) {
         HttpHeaders headers = new HttpHeaders();
-        
         EnroleNotice enroleNotice = enroleNoticeService.findEnroleNoticeById(id);
         Messages messages = new Messages();
         messages.setMessageFrom(getUserdetails());
@@ -283,10 +375,10 @@ public class WhiteBoardController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/enroleNotices/privateMessage/sendMessage/{id}", method = RequestMethod.POST)
-    public ModelAndView enrollNoticeSendPrivateMessage(@PathVariable Integer id,
+    @RequestMapping(value = "/enroleNotices/privateMessage/sendMessage/{id}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> enrollNoticeSendPrivateMessage(@PathVariable Integer id,
             @RequestParam(value = "privateMessage") String privateMessage) {
-        ModelAndView modelAndView = new ModelAndView();
+        HttpHeaders headers = new HttpHeaders();
         WhiteBoard whiteBoard = whiteBoardService.findWhiteBoardByID(id);
         Messages messages = new Messages();
         messages.setMessageFrom(getUserdetails());
@@ -295,10 +387,8 @@ public class WhiteBoardController {
         messages.setMessageTo(whiteBoard.getEmail());
         messages.setNoticeId(id);
         messagesService.addMessage(messages);
-        modelAndView.addObject("successMessage", "Message sent successfully");
-        modelAndView.addObject("whiteBoard", whiteBoard);
-        modelAndView.setViewName("privateMessage");
-        return modelAndView;
+        headers.set("successMessage", "Message sent successfully");
+        return new ResponseEntity<>(whiteBoard, headers, HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
     }
 
     @RequestMapping(value = "/myPrivateMessages/delete/{id}", method = RequestMethod.POST)
@@ -365,7 +455,7 @@ public class WhiteBoardController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/enroleNotices/groupMessage/sendMessage/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/enroleNotices/groupMessage/sendMessage/{id}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ModelAndView sendGroupMessage(@PathVariable Integer id,
             @RequestParam(value = "groupMessage") String groupMessage) {
         ModelAndView modelAndView = new ModelAndView();
@@ -426,5 +516,23 @@ public class WhiteBoardController {
         modelAndView.addObject("whiteBoardNotices", whiteBoardService.getNoticesByUserID(getUserdetails()));
         modelAndView.setViewName("myWhiteBoard");
         return modelAndView;
+    }
+    
+    @RequestMapping(value = "/myGroupMessages/sendReply/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> replyToGroupMessage(@PathVariable Integer id,
+            @RequestParam(value = "replyGroupMessage") String replyGroupMessage) {
+        HttpHeaders headers = new HttpHeaders();
+        Messages messages = messagesService.findMessagesByID(id);
+        Iterable<Messages> noticeEnrolled = messagesService.findGroupEmailsFromEnroleNoticeByNoticeId(messages.getNoticeId());
+        for (Messages messages1 : noticeEnrolled) {
+            Messages replyMessage = new Messages();
+            replyMessage.setMessageFrom(getUserdetails());
+            replyMessage.setMessageType("rg");
+            replyMessage.setMessageDescription(replyGroupMessage);
+            replyMessage.setMessageTo(messages1.getMessageTo());
+            replyMessage.setNoticeId(messages.getNoticeId());
+            messagesService.addMessage(replyMessage);
+        }
+        return new ResponseEntity<>(messages, headers, HttpStatus.OK);
     }
 }

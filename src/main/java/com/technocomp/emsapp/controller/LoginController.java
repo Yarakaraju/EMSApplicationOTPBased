@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.http.HttpHeaders;
@@ -34,8 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
- * Created by Ravi Varma Yarakaraj on 12/28/2017.
+ * This RestController has the CRUD API Exposed to handle User Management.
+ * @author Ravi Varma Yarakaraju
+ * @version 1.0 *
  */
+
 @RestController
 public class LoginController {
 
@@ -186,8 +190,9 @@ public class LoginController {
      * @return
      */
     public String generateOTP() {
-        int randomPin = (int) (Math.random() * 9000) + 10000000;
-        String otp = String.valueOf(randomPin);
+        Random randInt = new Random();
+         int rand = 14237536 + randInt.nextInt(85662999);
+        String otp = String.valueOf(rand);
         return otp;
     }
 

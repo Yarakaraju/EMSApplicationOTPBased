@@ -23,6 +23,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * This RestController has the CRUD API Exposed to handle Events.
+ * @author Ravi Varma Yarakaraju
+ * @version 1.0 *
+ */
 @RestController
 @RequestMapping("api")
 public class EventController {
