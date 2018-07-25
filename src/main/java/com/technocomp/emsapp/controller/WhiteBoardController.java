@@ -78,11 +78,11 @@ public class WhiteBoardController {
 
      /**
      * API to get private messages. .
-     * @param latitudefornotice
-     * @param longitudefornotice
-     * @param maxRadius
-     * @return JSON object of Iterable list of private messages 
-     * @throws Exception 
+     * @param latitudefornotice Required parameter to get latitude for notices
+     * @param longitudefornotice Required parameter to get longitude for notices
+     * @param maxRadius Radius for notices
+     * @return JSON object of Iterated list of private messages 
+     * @throws Exception only when required parameters are not provided 
      */
     @RequestMapping(value = "/privateMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Iterable<Messages>> getPrivateMessages(@RequestParam(value = "latitudefornotice") String latitudefornotice,
