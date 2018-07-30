@@ -1,6 +1,5 @@
 package com.technocomp.emsapp.controller;
 
-import com.amazonaws.services.cognitoidp.model.HttpHeader;
 import com.technocomp.emsapp.domain.EnroleNotice;
 import com.technocomp.emsapp.domain.Messages;
 import com.technocomp.emsapp.domain.Notices;
@@ -108,17 +107,17 @@ public class WhiteBoardController {
 
     /**
      * API to register new notice.
-     * @param itemTitle
-     * @param itemDescription
-     * @param mobile
-     * @param maxPratispents
-     * @param latitude
-     * @param longitude
-     * @param location
-     * @param city
-     * @param state
-     * @param allowedRadius
-     * @param ucBuilder
+     * @param itemTitle is used to name a notice
+     * @param itemDescription is used to describe the item
+     * @param mobile contact number for this notice
+     * @param maxPratispents total number allowed to attend
+     * @param latitude latitude location
+     * @param longitude longitude location
+     * @param location location name/ area name
+     * @param city city where the event / item will be happened
+     * @param state to state details
+     * @param allowedRadius area radius where people are allowed to attend the event/ item.
+     * @param ucBuilder This is for URL Component Builder
      * @return HTTP status OK if created successfully. 
      * @throws Exception 
      */
@@ -157,7 +156,7 @@ public class WhiteBoardController {
 
     /**
      * API to delete Notice.
-     * @param id
+     * @param id is used to delete a notice
      * @param ucBuilder
      * @return HTTP status OK if created successfully. 
      * @throws Exception 
@@ -181,9 +180,9 @@ public class WhiteBoardController {
 
      /**
      * API to list Of Notices Two Mile Radius.
-     * @param latitudefornotice
-     * @param longitudefornotice
-     * @param maxRadius
+     * @param latitudefornotice latitude location
+     * @param longitudefornotice longitude location
+     * @param maxRadius which is allowed to get the radius (2 Miles) in that location.
      * @return HTTP status OK if created successfully. 
      * @throws Exception 
      */
@@ -198,7 +197,7 @@ public class WhiteBoardController {
 
     /**
      * API to get notices By City.
-     * @param city
+     * @param city is used to get all the events based on city.
      * @return HTTP status OK if created successfully. 
      * @throws Exception 
      */
@@ -211,7 +210,7 @@ public class WhiteBoardController {
 
     /**
      * API to get notices By State.
-     * @param state
+     * @param state is required to get all notices in that state.
      * @return HTTP status OK if created successfully. 
      * @throws Exception 
      */
@@ -224,7 +223,7 @@ public class WhiteBoardController {
 
      /**
      * API to get notices By Country.
-     * @param country
+     * @param country is required to get events/ notices in that area.
      * @return HTTP status OK if created successfully. 
      * @throws Exception 
      */
